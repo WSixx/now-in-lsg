@@ -4,13 +4,32 @@ plugins {
     alias(libs.plugins.nowinlsg.ksp)
 }
 
+val appVersionName: String = providers
+    .fileContents(layout.projectDirectory.file("../version.properties"))
+    .asText
+    .get()
+    .lineSequence()
+    .map { it.trim() }
+    .firstOrNull { it.startsWith("VERSION_NAME=") }
+    ?.substringAfter("=")
+    ?.trim()
+    ?: error("VERSION_NAME not found in version.properties")
+
+val appVersionCode: Int = appVersionName
+    .substringBefore("-")
+    .split(".")
+    .let { parts ->
+        require(parts.size == 3) { "VERSION_NAME must follow SemVer (MAJOR.MINOR.PATCH): $appVersionName" }
+        (parts[0].toInt() * 10_000) + (parts[1].toInt() * 100) + parts[2].toInt()
+    }
+
 android {
     namespace = "br.com.lucad.nowinlsg"
 
     defaultConfig {
         applicationId = "br.com.lucad.nowinlsg"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
     }
 
     buildTypes {
