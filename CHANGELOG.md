@@ -4,6 +4,14 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.2](https://github.com/WSixx/now-in-lsg/compare/v1.1.1...v1.1.2) (2026-11-15)
+
+
+### Code Refactoring
+
+* **app:** migrate to kotlinx-serialization and modernize archite… ([8cc8b6e](https://github.com/WSixx/now-in-lsg/commit/8cc8b6e4443783fa0510d4079dccbc1b37c8a3b3))
+* **app:** migrate to kotlinx-serialization and modernize architecture ([e4d6a80](https://github.com/WSixx/now-in-lsg/commit/e4d6a806558020f60e869eb5666f333201995112))
+
 ## [1.1.1](https://github.com/WSixx/now-in-lsg/compare/v1.1.0...v1.1.1) (2026-11-15)
 
 
