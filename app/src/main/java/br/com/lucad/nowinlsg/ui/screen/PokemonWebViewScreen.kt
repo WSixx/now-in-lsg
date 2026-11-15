@@ -1,5 +1,6 @@
 package br.com.lucad.nowinlsg.ui.screen
 
+import android.annotation.SuppressLint
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -39,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import br.com.lucad.nowinlsg.ui.theme.NowInLSGTheme
 
+@SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonWebViewScreen(
@@ -126,6 +128,8 @@ fun PokemonWebViewScreen(
                         WebView(context).apply {
                             settings.javaScriptEnabled = true
                             settings.domStorageEnabled = true
+                            settings.allowFileAccess = false
+                            settings.allowContentAccess = false
                             webChromeClient = object : WebChromeClient() {
                                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                                     progress = newProgress
@@ -136,7 +140,8 @@ fun PokemonWebViewScreen(
                                     view: WebView?,
                                     request: WebResourceRequest?
                                 ): Boolean {
-                                    return false
+                                    val scheme = request?.url?.scheme?.lowercase()
+                                    return scheme != "https"
                                 }
                             }
                             loadUrl(url)

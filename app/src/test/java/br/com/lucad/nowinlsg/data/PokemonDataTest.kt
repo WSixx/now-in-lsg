@@ -1,18 +1,13 @@
 package br.com.lucad.nowinlsg.data
 
+import br.com.lucad.nowinlsg.data.api.RetrofitClient
 import br.com.lucad.nowinlsg.data.model.PokemonEntry
 import br.com.lucad.nowinlsg.data.model.PokemonListResponse
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class PokemonDataTest {
-
-    private val moshi: Moshi = Moshi.Builder()
-        .addLast(KotlinJsonAdapterFactory())
-        .build()
 
     @Test
     fun testPokemonEntryIdParsing() {
@@ -47,15 +42,14 @@ class PokemonDataTest {
             }
         """.trimIndent()
 
-        val adapter = moshi.adapter(PokemonListResponse::class.java)
-        val response = adapter.fromJson(json)
+        val response = RetrofitClient.json.decodeFromString<PokemonListResponse>(json)
 
         assertNotNull(response)
-        assertEquals(1302, response?.count)
-        assertEquals(2, response?.results?.size)
-        assertEquals("bulbasaur", response?.results?.get(0)?.name)
-        assertEquals(1, response?.results?.get(0)?.id)
-        assertEquals("ivysaur", response?.results?.get(1)?.name)
-        assertEquals(2, response?.results?.get(1)?.id)
+        assertEquals(1302, response.count)
+        assertEquals(2, response.results.size)
+        assertEquals("bulbasaur", response.results[0].name)
+        assertEquals(1, response.results[0].id)
+        assertEquals("ivysaur", response.results[1].name)
+        assertEquals(2, response.results[1].id)
     }
 }

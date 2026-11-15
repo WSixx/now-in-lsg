@@ -75,6 +75,7 @@ import br.com.lucad.nowinlsg.ui.state.PokemonDetailUiState
 import br.com.lucad.nowinlsg.ui.theme.NowInLSGTheme
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,7 +226,7 @@ fun PokemonDetailContent(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-    val formattedId = "#%03d".format(pokemon.id)
+    val formattedId = String.format(Locale.ROOT, "#%03d", pokemon.id)
     val capitalizedName = pokemon.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 
     Column(
@@ -360,7 +361,7 @@ fun PokemonDetailContent(
                 PhysicalStatItem(
                     icon = Icons.Rounded.Height,
                     label = "Height",
-                    value = "%.1f m".format(pokemon.height / 10.0)
+                    value = String.format(Locale.ROOT, "%.1f m", pokemon.height / 10.0)
                 )
 
                 Surface(
@@ -374,7 +375,7 @@ fun PokemonDetailContent(
                 PhysicalStatItem(
                     icon = Icons.Rounded.FitnessCenter,
                     label = "Weight",
-                    value = "%.1f kg".format(pokemon.weight / 10.0)
+                    value = String.format(Locale.ROOT, "%.1f kg", pokemon.weight / 10.0)
                 )
             }
         }

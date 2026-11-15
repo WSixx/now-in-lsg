@@ -1,25 +1,23 @@
 package br.com.lucad.nowinlsg.data.model
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class PokemonListResponse(
-    @Json(name = "count") val count: Int = 0,
-    @Json(name = "next") val next: String? = null,
-    @Json(name = "previous") val previous: String? = null,
-    @Json(name = "results") val results: List<PokemonEntry> = emptyList()
+    @SerialName("count") val count: Int = 0,
+    @SerialName("next") val next: String? = null,
+    @SerialName("previous") val previous: String? = null,
+    @SerialName("results") val results: List<PokemonEntry> = emptyList()
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class PokemonEntry(
-    @Json(name = "name") val name: String,
-    @Json(name = "url") val url: String
+    @SerialName("name") val name: String,
+    @SerialName("url") val url: String
 ) {
     val id: Int
-        get() {
-            return url.trimEnd('/').split("/").lastOrNull()?.toIntOrNull() ?: 0
-        }
+        get() = url.trimEnd('/').substringAfterLast('/').toIntOrNull() ?: 0
 
     val imageUrl: String
         get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"

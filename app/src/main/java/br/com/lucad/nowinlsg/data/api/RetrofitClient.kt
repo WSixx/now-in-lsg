@@ -1,22 +1,26 @@
 package br.com.lucad.nowinlsg.data.api
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     private const val BASE_URL = "https://pokeapi.co/api/v2/"
+    private val CONTENT_TYPE = "application/json; charset=UTF8".toMediaType()
 
-    private val moshi: Moshi = Moshi.Builder()
-        .addLast(KotlinJsonAdapterFactory())
-        .build()
+    val json: Json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        isLenient = true
+    }
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = HttpLoggingInterceptor.Level.BASIC
     }
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
@@ -28,10 +32,10 @@ object RetrofitClient {
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .addConverterFactory(json.asConverterFactory(CONTENT_TYPE))
         .build()
 
     val pokeApiService: PokeApiService by lazy {
-        retrofit.create(PokeApiService::class.java)
+        retrofit.create<PokeApiService>()
     }
 }

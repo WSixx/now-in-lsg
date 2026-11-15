@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SearchOff
@@ -49,10 +48,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -63,6 +60,7 @@ import br.com.lucad.nowinlsg.ui.state.PokemonListUiState
 import br.com.lucad.nowinlsg.ui.theme.NowInLSGTheme
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -270,7 +268,7 @@ fun PokemonCard(
     onPokemonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val formattedId = "#%03d".format(entry.id)
+    val formattedId = String.format(Locale.ROOT, "#%03d", entry.id)
     val capitalizedName = entry.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 
     Card(

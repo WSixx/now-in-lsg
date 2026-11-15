@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -39,7 +40,7 @@ class PokemonListViewModelTest {
 
     @Test
     fun testInitialLoadSuccess() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         val state = viewModel.uiState.value
         assertFalse(state.isLoading)
         assertNull(state.errorMessage)
@@ -49,7 +50,7 @@ class PokemonListViewModelTest {
 
     @Test
     fun testSearchQueryFilteringByName() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         viewModel.onSearchQueryChanged("pika")
         val state = viewModel.uiState.value
         assertEquals(1, state.pokemonList.size)
@@ -58,7 +59,7 @@ class PokemonListViewModelTest {
 
     @Test
     fun testSearchQueryFilteringById() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         viewModel.updateSearchQuery("2")
         val state = viewModel.uiState.value
         assertEquals(1, state.pokemonList.size)
@@ -67,7 +68,7 @@ class PokemonListViewModelTest {
 
     @Test
     fun testFavoriteFilterToggling() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         fakeFavoritesRepository.toggleFavorite(25) // Favorite Pikachu (ID 25)
 
         viewModel.setFavoritesOnly(true)
@@ -83,7 +84,7 @@ class PokemonListViewModelTest {
 
     @Test
     fun testToggleFavoriteStatus() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         viewModel.toggleFavorite(1) // Bulbasaur ID 1
         val state = viewModel.uiState.value
         assertTrue(state.favoriteIds.contains(1))
@@ -95,7 +96,7 @@ class PokemonListViewModelTest {
 
     @Test
     fun testLoadErrorState() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         fakePokemonRepository.shouldReturnError = true
         viewModel.refresh()
 

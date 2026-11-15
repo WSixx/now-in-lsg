@@ -6,7 +6,7 @@ import br.com.lucad.nowinlsg.data.model.PokemonDetailResponse
 import br.com.lucad.nowinlsg.data.repository.FavoritesRepository
 import br.com.lucad.nowinlsg.data.repository.PokemonRepository
 import br.com.lucad.nowinlsg.ui.state.PokemonDetailUiState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,8 +27,8 @@ class PokemonDetailViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     private val _currentPokemonId = MutableStateFlow<Int?>(null)
     private var lastRequestedNameOrId: String? = null
+    private var detailJob: Job? = null
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val isFavoriteFlow: Flow<Boolean> = _currentPokemonId.flatMapLatest { id ->
         if (id != null) {
             favoritesRepository.isFavoriteFlow(id)
@@ -51,17 +51,26 @@ class PokemonDetailViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.WhileSubscribed(5_000),
         initialValue = PokemonDetailUiState()
     )
 
-    fun loadPokemonDetail(nameOrId: String) {
+    fun loadPokemonDetail(nameOrId: String, forceReload: Boolean = false) {
+        val currentDetail = _pokemonDetail.value
+        if (!forceReload &&
+            lastRequestedNameOrId == nameOrId &&
+            (currentDetail != null || _isLoading.value)
+        ) {
+            return
+        }
+
         lastRequestedNameOrId = nameOrId
         nameOrId.toIntOrNull()?.let { numericId ->
             _currentPokemonId.value = numericId
         }
 
-        viewModelScope.launch {
+        detailJob?.cancel()
+        detailJob = viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
             pokemonRepository.getPokemonDetail(nameOrId)
@@ -91,6 +100,6 @@ class PokemonDetailViewModel(
     }
 
     fun refresh() {
-        lastRequestedNameOrId?.let { loadPokemonDetail(it) }
+        lastRequestedNameOrId?.let { loadPokemonDetail(it, forceReload = true) }
     }
 }

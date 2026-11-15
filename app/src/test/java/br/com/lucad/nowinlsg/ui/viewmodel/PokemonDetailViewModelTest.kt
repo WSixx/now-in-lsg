@@ -8,6 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -37,7 +38,7 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun testLoadPokemonDetailSuccess() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         viewModel.loadPokemonDetail("pikachu")
         val state = viewModel.uiState.value
 
@@ -51,7 +52,7 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun testToggleFavoriteInDetail() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         viewModel.loadPokemonDetail("25")
         assertFalse(viewModel.uiState.value.isFavorite)
 
@@ -64,7 +65,7 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun testLoadPokemonDetailError() = runTest {
-        backgroundScope.launch { viewModel.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect() }
         fakePokemonRepository.shouldReturnError = true
         viewModel.loadPokemonDetail("unknown")
 

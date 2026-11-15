@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.nowinlsg.android.application)
     alias(libs.plugins.nowinlsg.android.compose)
-    alias(libs.plugins.nowinlsg.ksp)
+    alias(libs.plugins.nowinlsg.serialization)
 }
 
 val appVersionName: String = providers
@@ -59,8 +59,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-
-    ksp(libs.moshi.kotlin.codegen)
 
     testImplementation(libs.bundles.test.unit)
 
