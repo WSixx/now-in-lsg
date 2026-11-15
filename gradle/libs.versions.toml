@@ -29,7 +29,7 @@ junit = "4.13.2"
 # Networking, Images & Async
 coilCompose = "2.7.0"
 kotlinxCoroutines = "1.11.0"
-moshi = "1.15.2"
+kotlinxSerialization = "1.13.0"
 okhttp = "5.5.1"
 retrofit = "3.0.0"
 
@@ -59,13 +59,12 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 
 # Networking, Images & Async
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
-converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
+converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
-moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
-moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 
@@ -104,9 +103,9 @@ lifecycle = [
     "androidx-lifecycle-viewmodel-compose",
 ]
 networking = [
-    "converter-moshi",
+    "converter-kotlinx-serialization",
+    "kotlinx-serialization-json",
     "logging-interceptor",
-    "moshi-kotlin",
     "okhttp",
     "retrofit",
 ]
@@ -127,9 +126,11 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 # Project Convention Plugins
 nowinlsg-android-application = { id = "nowinlsg.android.application" }
 nowinlsg-android-compose = { id = "nowinlsg.android.compose" }
 nowinlsg-android-test = { id = "nowinlsg.android.test" }
 nowinlsg-ksp = { id = "nowinlsg.ksp" }
+nowinlsg-serialization = { id = "nowinlsg.serialization" }

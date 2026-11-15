@@ -49,5 +49,9 @@ gradlePlugin {
             id = libs.plugins.nowinlsg.ksp.get().pluginId
             implementationClass = "KspConventionPlugin"
         }
+        register("serialization") {
+            id = libs.plugins.nowinlsg.serialization.get().pluginId
+            implementationClass = "SerializationConventionPlugin"
+        }
     }
 }

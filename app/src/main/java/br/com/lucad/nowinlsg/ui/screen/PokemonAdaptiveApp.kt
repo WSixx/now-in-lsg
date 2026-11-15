@@ -7,13 +7,13 @@ import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.lucad.nowinlsg.ui.viewmodel.PokemonDetailViewModel
@@ -26,10 +26,10 @@ import kotlinx.coroutines.launch
 fun PokemonAdaptiveApp(
     modifier: Modifier = Modifier,
     listViewModel: PokemonListViewModel = viewModel(
-        factory = PokemonViewModelFactory.create(LocalContext.current)
+        factory = PokemonViewModelFactory.AppFactory
     ),
     detailViewModel: PokemonDetailViewModel = viewModel(
-        factory = PokemonViewModelFactory.create(LocalContext.current)
+        factory = PokemonViewModelFactory.AppFactory
     )
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<String>()
@@ -38,12 +38,20 @@ fun PokemonAdaptiveApp(
     val listUiState by listViewModel.uiState.collectAsStateWithLifecycle()
     val detailUiState by detailViewModel.uiState.collectAsStateWithLifecycle()
 
-    var currentWebUrl by remember { mutableStateOf<String?>(null) }
-    var currentWebTitle by remember { mutableStateOf("Web Info") }
+    var currentWebUrl by rememberSaveable { mutableStateOf<String?>(null) }
+    var currentWebTitle by rememberSaveable { mutableStateOf("Web Info") }
 
-    if (currentWebUrl != null) {
+    val selectedPokemonKey = navigator.currentDestination?.contentKey
+    LaunchedEffect(selectedPokemonKey) {
+        if (!selectedPokemonKey.isNullOrBlank()) {
+            detailViewModel.loadPokemonDetail(selectedPokemonKey)
+        }
+    }
+
+    val webUrl = currentWebUrl
+    if (webUrl != null) {
         PokemonWebViewScreen(
-            url = currentWebUrl!!,
+            url = webUrl,
             title = currentWebTitle,
             onBack = { currentWebUrl = null },
             modifier = modifier
@@ -56,15 +64,9 @@ fun PokemonAdaptiveApp(
                 AnimatedPane {
                     PokemonListScreen(
                         uiState = listUiState,
-                        onSearchQueryChanged = { query ->
-                            listViewModel.onSearchQueryChanged(query)
-                        },
-                        onToggleFavoriteFilter = {
-                            listViewModel.toggleFavoriteFilter()
-                        },
-                        onToggleFavorite = { pokemonId ->
-                            listViewModel.toggleFavorite(pokemonId)
-                        },
+                        onSearchQueryChanged = listViewModel::onSearchQueryChanged,
+                        onToggleFavoriteFilter = listViewModel::toggleFavoriteFilter,
+                        onToggleFavorite = listViewModel::toggleFavorite,
                         onPokemonSelected = { pokemonId ->
                             detailViewModel.loadPokemonDetail(pokemonId)
                             coroutineScope.launch {
@@ -74,9 +76,7 @@ fun PokemonAdaptiveApp(
                                 )
                             }
                         },
-                        onRetry = {
-                            listViewModel.refresh()
-                        }
+                        onRetry = listViewModel::refresh
                     )
                 }
             },
@@ -92,12 +92,8 @@ fun PokemonAdaptiveApp(
                                 navigator.navigateBack()
                             }
                         },
-                        onToggleFavorite = {
-                            detailViewModel.toggleFavorite()
-                        },
-                        onRetry = {
-                            detailViewModel.refresh()
-                        },
+                        onToggleFavorite = detailViewModel::toggleFavorite,
+                        onRetry = detailViewModel::refresh,
                         onOpenWebInfo = { url ->
                             val pokemonName = detailUiState.pokemonDetail?.name?.replaceFirstChar {
                                 if (it.isLowerCase()) it.titlecase() else it.toString()

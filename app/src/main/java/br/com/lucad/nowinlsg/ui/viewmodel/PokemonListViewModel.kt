@@ -6,6 +6,7 @@ import br.com.lucad.nowinlsg.data.model.PokemonEntry
 import br.com.lucad.nowinlsg.data.repository.FavoritesRepository
 import br.com.lucad.nowinlsg.data.repository.PokemonRepository
 import br.com.lucad.nowinlsg.ui.state.PokemonListUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ class PokemonListViewModel(
     private val _isFavoritesOnly = MutableStateFlow(false)
     private val _isLoading = MutableStateFlow(false)
     private val _errorMessage = MutableStateFlow<String?>(null)
+    private var loadJob: Job? = null
 
     val uiState: StateFlow<PokemonListUiState> = combine(
         _rawPokemonList,
@@ -31,10 +33,11 @@ class PokemonListViewModel(
         _isFavoritesOnly,
         _isLoading
     ) { rawList, favIds, query, favOnly, loading ->
+        val trimmedQuery = query.trim()
         val filtered = rawList.filter { entry ->
-            val matchesQuery = query.isBlank() ||
-                    entry.name.contains(query.trim(), ignoreCase = true) ||
-                    entry.id.toString() == query.trim()
+            val matchesQuery = trimmedQuery.isEmpty() ||
+                entry.name.contains(trimmedQuery, ignoreCase = true) ||
+                entry.id.toString() == trimmedQuery
             val matchesFav = !favOnly || favIds.contains(entry.id)
             matchesQuery && matchesFav
         }
@@ -43,14 +46,13 @@ class PokemonListViewModel(
             favoriteIds = favIds,
             searchQuery = query,
             isFavoritesOnly = favOnly,
-            isLoading = loading,
-            errorMessage = _errorMessage.value
+            isLoading = loading
         )
     }.combine(_errorMessage) { state, error ->
         state.copy(errorMessage = error)
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.WhileSubscribed(5_000),
         initialValue = PokemonListUiState(isLoading = true)
     )
 
@@ -59,7 +61,8 @@ class PokemonListViewModel(
     }
 
     fun loadPokemonList(limit: Int = 151, offset: Int = 0) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
             pokemonRepository.getPokemonList(limit, offset)
