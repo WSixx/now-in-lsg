@@ -49,8 +49,17 @@ fun PokemonAdaptiveApp(
         }
     }
 
+    var hasColdStartupSettled by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(listUiState.isLoading) {
+        if (!listUiState.isLoading) {
+            hasColdStartupSettled = true
+        }
+    }
+
     val webUrl = currentWebUrl
-    LaunchedEffect(webUrl != null) {
+    LaunchedEffect(hasColdStartupSettled, webUrl != null) {
+        // Evita restringir o orçamento durante o cold launch (carregamento inicial de classes, shaders e lista)
+        if (!hasColdStartupSettled) return@LaunchedEffect
         onWebViewVisibilityChanged(webUrl != null)
     }
 
