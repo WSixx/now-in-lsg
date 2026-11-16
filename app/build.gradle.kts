@@ -46,6 +46,12 @@ android {
             isDebuggable = false
         }
     }
+
+    sourceSets {
+        getByName("benchmark") {
+            manifest.srcFile("src/release/AndroidManifest.xml")
+        }
+    }
 }
 
 dependencies {

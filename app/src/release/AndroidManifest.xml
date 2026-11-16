@@ -3,16 +3,19 @@
 
     <application>
         <!--
-            Orçamento base de memória (foreground).
+            Orçamento explícito de foreground escalado pela área ativa da janela (WindowMetrics),
+            adequado para UI adaptativa (celulares, dobráveis, tablets e janelas redimensionáveis).
+            Ordem obrigatória: foreground -> background.
         -->
         <memory-budget
-            android:maxMb="192"
-            android:additionalMbPerDensity="16" />
+            android:state="foreground"
+            android:maxMb="160"
+            android:additionalBytesPerDisplayPixel="16" />
 
         <!-- Orçamento mais restritivo quando o processo está em background -->
         <memory-budget
-            android:maxMb="48"
-            android:state="background" />
+            android:state="background"
+            android:maxMb="48" />
     </application>
 
 </manifest>
