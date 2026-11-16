@@ -4,6 +4,14 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.3.0](https://github.com/WSixx/now-in-lsg/compare/v1.2.0...v1.3.0) (2026-11-16)
+
+
+### Features
+
+* **memory2:** update MemoryBudgetManager ([42b5093](https://github.com/WSixx/now-in-lsg/commit/42b5093734f07f489987ea3a7efb6d6a3ad0773f))
+* **memory2:** update MemoryBudgetManager ([3b683de](https://github.com/WSixx/now-in-lsg/commit/3b683de2781f7b080c0c0e18ab9179cbf9aae82a))
+
 ## [1.2.0](https://github.com/WSixx/now-in-lsg/compare/v1.1.2...v1.2.0) (2026-11-16)
 
 
