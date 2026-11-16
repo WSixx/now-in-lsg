@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!--
+            Orçamento base de memória (foreground).
+        -->
+        <memory-budget
+            android:maxMb="192"
+            android:additionalMbPerDensity="16" />
+
+        <!-- Orçamento mais restritivo quando o processo está em background -->
+        <memory-budget
+            android:maxMb="48"
+            android:state="background" />
+    </application>
+
+</manifest>

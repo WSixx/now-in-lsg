@@ -30,7 +30,8 @@ fun PokemonAdaptiveApp(
     ),
     detailViewModel: PokemonDetailViewModel = viewModel(
         factory = PokemonViewModelFactory.AppFactory
-    )
+    ),
+    onWebViewVisibilityChanged: (Boolean) -> Unit = {},
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<String>()
     val coroutineScope = rememberCoroutineScope()
@@ -49,6 +50,10 @@ fun PokemonAdaptiveApp(
     }
 
     val webUrl = currentWebUrl
+    LaunchedEffect(webUrl != null) {
+        onWebViewVisibilityChanged(webUrl != null)
+    }
+
     if (webUrl != null) {
         PokemonWebViewScreen(
             url = webUrl,
